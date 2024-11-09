@@ -1,0 +1,83 @@
+---
+
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Register</title>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <form class="signup-form">
+      <label for="username">Username</label>
+      <input name="username" type="text" id="username" />
+      <label for="password">password</label>
+      <input name="password" type="text" id="password" />
+      <label for="firstname">firstname</label>
+      <input name="firstname" type="text" id="firstname" />
+      <label for="lastname">lastname</label>
+      <input name="lastname" type="text" id="lastname" />
+      <button type="submit">Sign Up</button>
+    </form>
+    <a href="/">Back to Home</a>
+    <style>
+      form {
+        margin-left: 50px;
+        border: 1px black solid;
+        display: inline-block;
+        padding: 20px;
+      }
+      input {
+        display: block;
+      }
+      button {
+        margin-top: 10px;
+      }
+      a {
+        display: block;
+        margin-left: 20px;
+        margin-top: 10px;
+      }
+    </style>
+    <script>
+      const form = document.querySelector(".signup-form") as HTMLFormElement;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const username = formData.get("username");
+        const password = formData.get("password");
+        const firstname = formData.get("firstname");
+        const lastname = formData.get("lastname");
+
+        console.log(
+          JSON.stringify({ username, password, firstname, lastname })
+        );
+
+        const response = await fetch(`http://localhost:3000/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            firstname: firstname,
+            lastname: lastname,
+          }),
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok && data.redirect) {
+          window.location.href = data.redirect; // リダイレクト処理
+        } else {
+          console.error("Signup failed:", data.message);
+        }
+      });
+    </script>
+  </body>
+</html>

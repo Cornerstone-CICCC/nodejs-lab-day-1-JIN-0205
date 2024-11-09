@@ -1,0 +1,80 @@
+---
+
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Log In</title>
+  </head>
+  <body>
+    <h1>Log In</h1>
+
+    <form class="login-form">
+      <label for="username">
+        <span>Username</span>
+        <input type="text" id="username" name="username" />
+      </label>
+      <label for="password">
+        <span>Password</span>
+        <input type="text" id="password" name="password" />
+      </label>
+      <button type="submit">Log In</button>
+    </form>
+
+    <a href="/">Back to Home</a>
+    <a href="/register">Sign Up</a>
+    <style>
+      form {
+        margin-left: 50px;
+        border: 1px black solid;
+        display: inline-block;
+        padding: 20px;
+      }
+      input {
+        display: block;
+      }
+      button {
+        margin-top: 10px;
+      }
+      a {
+        display: block;
+        margin-left: 20px;
+        margin-top: 10px;
+      }
+    </style>
+    <script>
+      const form = document.querySelector(".login-form") as HTMLFormElement;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const username = formData.get("username");
+        const password = formData.get("password");
+
+        console.log(JSON.stringify({ username, password }));
+
+        const response = await fetch(`http://localhost:3000/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+          }),
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok && data.redirect) {
+          window.location.href = data.redirect;
+        } else {
+          console.error("Login failed:", data.message);
+        }
+      });
+    </script>
+  </body>
+</html>
